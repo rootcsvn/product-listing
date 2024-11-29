@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+// Import the HTTP Request class & facade for API requests
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class ProductController extends Controller
 {
+    // Method to fetch products from a third-party API
     public function getProducts()
     {
         // Use Dummy Products API: https://dummyjson.com/products
-        $response = Http::get('https://dummyjson.com/products');
+        $response = Http::get(env('DUMMY_PRODUCTS_API_URL'));
 
         // Check if the API request was successful
         if ($response->successful()) {
