@@ -1,10 +1,8 @@
 <?php
 
-namespace routes;
-
-// Import the Route facade & ProductController
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
-// Define an API route that uses the 'fetchProducts' method in ProductController
+// Define a route to fetch products
 Route::get('/products', [ProductController::class, 'fetchProducts']);
