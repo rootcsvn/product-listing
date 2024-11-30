@@ -40,12 +40,18 @@ const ProductList: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+            {/* Page Header */}
+            <header className="text-center mb-8">
+                <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Product Catalog</h1>
+                <p className="text-gray-600">Browse through our collection of premium products.</p>
+            </header>
+
             {/* SearchBar Component */}
             <SearchBar searchTerm={searchTerm} onSearch={handleSearch} />
 
             {/* Product List */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-6">
                 {filteredProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                 ))}
