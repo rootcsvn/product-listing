@@ -1,10 +1,11 @@
 import React from 'react';
-import HomePage from './pages/HomePage';
+import ProductList from './components/ProductList';
 
 const App: React.FC = () => {
     return (
         <div>
-            <HomePage />
+            <h1>Product Listing</h1>
+            <ProductList />
         </div>
     );
 };
