@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ProductCard from './ProductCard';
-import SearchBar from './SearchBar';
+import ProductCard from './ProductCard'; // Import ProductCard component
+import SearchBar from './SearchBar';    // Import SearchBar component
+import Pagination from './Pagination'; // Import Pagination component
 
 // TypeScript type for a product
 export interface Product {
@@ -13,30 +14,43 @@ export interface Product {
 }
 
 const ProductList: React.FC = () => {
-    const [products, setProducts] = useState<Product[]>([]); // Stores all products
-    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Stores filtered products
-    const [searchTerm, setSearchTerm] = useState(''); // Tracks the current search term
+    const [products, setProducts] = useState<Product[]>([]); // Stores products for the current page
+    const [totalPages, setTotalPages] = useState(1); // Total number of pages
+    const [currentPage, setCurrentPage] = useState(1); // Current page number
+    const [searchTerm, setSearchTerm] = useState(''); // Tracks the search term
 
-    // Fetch products from the backend on component mount
-    useEffect(() => {
-        axios.get('http://localhost:8000/api/products') // Replace with your backend's API URL
-            .then(response => {
-                setProducts(response.data.products); // Update state with fetched products
-                setFilteredProducts(response.data.products); // Set initial filtered products
+    const productsPerPage = 8; // Number of products per page
+
+    // Fetch products from the backend
+    const fetchProducts = (page: number, search = '') => {
+        axios
+            .get('http://localhost:8000/api/products', {
+                params: { page, per_page: productsPerPage, search },
             })
-            .catch(error => {
-                console.error('Error fetching products:', error); // Handle errors
+            .then((response) => {
+                setProducts(response.data.products);
+                setTotalPages(response.data.total_pages);
+                setCurrentPage(response.data.current_page);
+            })
+            .catch((error) => {
+                console.error('Error fetching products:', error);
             });
-    }, []);
+    };
+
+    // Fetch products on component mount and when the search term changes
+    useEffect(() => {
+        fetchProducts(currentPage, searchTerm);
+    }, [currentPage, searchTerm]);
 
     // Handle search input changes
     const handleSearch = (term: string) => {
-        setSearchTerm(term); // Update search term state
-        setFilteredProducts(
-            products.filter(product =>
-                product.title.toLowerCase().includes(term.toLowerCase())
-            )
-        ); // Filter products based on the search term
+        setSearchTerm(term);
+        setCurrentPage(1); // Reset to the first page on new search
+    };
+
+    // Handle page changes
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -52,9 +66,18 @@ const ProductList: React.FC = () => {
 
             {/* Product List */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-6">
-                {filteredProducts.map(product => (
+                {products.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-center mt-6">
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );
